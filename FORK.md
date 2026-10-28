@@ -27,4 +27,4 @@ git merge upstream/main   # on main
 
 | Topic branch | Merged in main | Upstream PR | Description |
 |--------------|----------------|-------------|-------------|
-| –            | –              | –           | None yet    |
+| `feature/archive-hiding` | yes | – | Hide archived documents per `lindenConfig/notebook.yml` (spec 0.4.0 §5.4); `a` toggle, `archived_documents` widget |
