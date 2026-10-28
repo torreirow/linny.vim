@@ -453,6 +453,10 @@ function! <SID>linny_menu_execute(index) abort
     elseif(item.event == 'exporttozip')
       call luaeval("require('linny.menu.actions').start_export_to_zip()")
 
+    elseif(item.event == 'togglearchived')
+      call luaeval("require('linny.archive').toggle_show()")
+      call luaeval("require('linny.menu.window').refresh()")
+
     elseif item.event[0] != '='
 
       if item.event =~ "linny_menu#openterm"

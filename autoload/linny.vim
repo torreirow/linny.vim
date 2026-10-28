@@ -56,6 +56,8 @@ function! linny#Init()
     return
   endif
 
+  call luaeval("require('linny.notebook').load_config()")
+
   let g:linny_state_path = expand(g:linnycfg_path_state)
 
   let g:linny_index_version = g:linnycfg_index_version

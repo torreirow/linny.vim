@@ -8,6 +8,7 @@ local items = require('linny.menu.items')
 local views = require('linny.menu.views')
 local util = require('linny.menu.util')
 local widgets = require('linny.menu.widgets')
+local archive = require('linny.archive')
 
 --- Test file against display expression
 --- @param file_dict table File metadata dictionary
@@ -257,9 +258,14 @@ function M.level2(tax, term)
   vim.t.linny_tasks_count = vim.fn['linny#parse_json_file'](vim.g.linny_index_path .. '/_index_docs_tasks_count.json', {})
 
   local files_menu = {}
+  local archived_count = 0
 
   for _, file_in_menu in ipairs(files_in_menu) do
-    if files_index[file_in_menu] then
+    if files_index[file_in_menu] and archive.is_archived(files_index[file_in_menu]) then
+      archived_count = archived_count + 1
+    end
+
+    if files_index[file_in_menu] and archive.is_visible(files_index[file_in_menu]) then
       if M.display_file_ask_view_props(view_props, files_index[file_in_menu]) then
         local file_in_menu_dict = {
           file = file_in_menu,
@@ -299,6 +305,8 @@ function M.level2(tax, term)
     items.add_section("### " .. util.string_capitalize(group))
     widgets.partial_files_listing(files_menu[group], view_props, 1)
   end
+
+  M.partial_archive_toggle(archived_count)
 
   items.add_empty_line()
   items.add_divider()
@@ -352,6 +360,23 @@ function M.level2(tax, term)
   items.add_special_event("<open context menu>", "opencontextmenu", 'm')
   items.add_special_event("<copy all paths>", "copyallpaths", 'Y')
   items.add_special_event("<export to zip>", "exporttozip", 'Z')
+end
+
+--- Render the archived-documents toggle for a term listing
+--- Shown only when the notebook hides archived documents and the term has some.
+--- @param archived_count number Archived documents in the term
+function M.partial_archive_toggle(archived_count)
+  if not archive.default_hidden() or archived_count == 0 then
+    return
+  end
+
+  items.add_empty_line()
+  if archive.hiding_active() then
+    items.add_text(archived_count .. " archived hidden")
+    items.add_special_event("<show archived>", "togglearchived", 'a')
+  else
+    items.add_special_event("<hide archived>", "togglearchived", 'a')
+  end
 end
 
 --- Render debug info partial
