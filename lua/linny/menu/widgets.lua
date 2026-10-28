@@ -4,14 +4,23 @@
 local M = {}
 
 local items = require('linny.menu.items')
+local archive = require('linny.archive')
 
 --- Get recently modified files from wiki content directory
 --- @param number number Number of recent files to return
 --- @return table List of recently modified filenames
 function M.recent_files(number)
-  local cmd = 'ls -1t ' .. vim.g.linny_path_wiki_content .. ' | grep -ve "^index.*\\|\\.docdir" | head -' .. number
-  local files = vim.fn.systemlist(cmd)
-  return files or {}
+  local cmd = 'ls -1t ' .. vim.g.linny_path_wiki_content .. ' | grep -ve "^index.*\\|\\.docdir"'
+  if not archive.hiding_active() then
+    cmd = cmd .. ' | head -' .. number
+  end
+  local files = vim.fn.systemlist(cmd) or {}
+
+  if archive.hiding_active() then
+    files = vim.list_slice(archive.filter_visible(files), 1, number)
+  end
+
+  return files
 end
 
 --- Get starred terms from index
@@ -25,7 +34,7 @@ end
 --- @return table List of starred document filenames
 function M.starred_docs_list()
   local docs = vim.fn['linny#parse_json_file'](vim.g.linny_index_path .. '/_index_docs_starred.json', {})
-  return docs
+  return archive.filter_visible(docs)
 end
 
 --- Render a list of files in the menu
@@ -138,6 +147,13 @@ end
 function M.starred_documents(widgetconf)
   local starred = M.starred_docs_list()
   M.partial_files_listing(starred, { sort = "az" }, false)
+end
+
+--- Widget: Archived documents
+--- Lists every archived document, regardless of the show-archived toggle.
+--- @param widgetconf table Widget configuration
+function M.archived_documents(widgetconf)
+  M.partial_files_listing(archive.archived_docs(), { sort = "az" }, false)
 end
 
 --- Widget: All level0 views

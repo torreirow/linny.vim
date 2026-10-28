@@ -21,6 +21,22 @@ function M.init()
   return true
 end
 
+--- Load lindenConfig/notebook.yml into g:linny_notebook_config
+--- Sets an empty dict when the file does not exist (Linden Index Spec 0.4.0 §5.4).
+--- @return table The loaded config
+function M.load_config()
+  local config = vim.empty_dict()
+  local path = (vim.g.linny_path_wiki_config or '') .. '/notebook.yml'
+  if vim.fn.filereadable(path) == 1 then
+    local parsed = vim.fn['linny#parse_yaml_to_dict'](path)
+    if type(parsed) == 'table' and not vim.tbl_isempty(parsed) then
+      config = parsed
+    end
+  end
+  vim.g.linny_notebook_config = config
+  return config
+end
+
 function M.open(path)
   -- If no path provided, prompt for it
   if not path or path == '' then

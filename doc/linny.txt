@@ -23,6 +23,7 @@ Contents ~
        4.1 Options                                             |Linny-options|
        4.2 Mappings                                           |Linny-mappings|
        4.3 Extra Mappings                               |Linny-extra-mappings|
+       4.4 Archived documents                               |Linny-archive|
      5. Bugs
      6. License
      7. Contributing
@@ -236,6 +237,46 @@ Default value: 1
 
 By settings this to 0 you disable the setup of the autocommands if you want to
 define them yourself. The autocommands are defines in `plugin/linny.vim`.
+
+-------------------------------------------------------------------------------
+                                                                *Linny-archive*
+Archived documents ~
+
+A document is archived when its front matter has `archive: true` (the context
+menu action "archive" sets it). By default archived documents are listed like
+any other. To hide them, add `lindenConfig/notebook.yml` to the notebook
+(Linden Index Spec 0.4.0, section 5.4):
+>
+  archive:
+    field: archive         # front-matter key, default: archive
+    default_hidden: true   # hide archived documents, default: false
+<
+The file is read by |linny#Init()|, so it follows the open notebook. Only the
+boolean `true` archives a document; the string "true" does not.
+
+When hiding is active, archived documents are left out of term listings and
+of the `starred_documents` and `recently_modified_documents` widgets. The
+index still contains them, and opening one by path or link still works.
+
+A term menu that hides archived documents shows how many, with a toggle:
+
+  `a`  <show archived> / <hide archived>
+
+The toggle (|g:linny_show_archived|) lasts for the session.
+
+To list all archived documents on a dashboard, add a widget to a view in
+`lindenConfig/views/`:
+>
+  - title: Archive
+    type: archived_documents
+<
+                                                         *g:linny_show_archived*
+g:linny_show_archived ~
+
+Default value: unset
+
+Set to 1 to show archived documents although `notebook.yml` hides them. The
+`a` toggle in a term menu flips it.
 
 ===============================================================================
                                                                    *Linny-bugs*

@@ -161,6 +161,8 @@ function M.render(view_name)
           widgets.all_level0_views(widget)
         elseif widget_type == "configured_notebooks" then
           widgets.configured_notebooks(widget)
+        elseif widget_type == "archived_documents" then
+          widgets.archived_documents(widget)
         else
           items.add_section("## ERROR unsupported widget type: " .. (widget_type or "nil"))
         end

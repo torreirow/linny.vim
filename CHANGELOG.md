@@ -2,6 +2,9 @@
 
 ## Next version
 
+- feature: hide archived documents via `lindenConfig/notebook.yml`
+  (`archive.default_hidden`), with an `a` toggle in term menus and an
+  `archived_documents` widget. Without the file nothing changes.
 - fix: improve context menu actions
 
 ## 0.9.1 - 10 mrt 2026
